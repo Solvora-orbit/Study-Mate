@@ -1,5 +1,5 @@
 {
   "generator": "zcode/scripts/build-zcode-plugin.mjs",
-  "pluginVersion": "0.1.0",
+  "pluginVersion": "0.1.1",
   "upstreamPackage": "2.0.1"
 }

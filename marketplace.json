@@ -1,10 +1,10 @@
 {
   "name": "studymate-suite",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "plugins": [
     {
       "name": "studymate",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "source": "zcode/studymate",
       "description": "StudyMate AI 学习搭档（ZCode 移植）：定路线、教材式课件、分层练习、可运行证据考核、进度与共享记忆。",
       "displayName": "StudyMate 学习搭档",
