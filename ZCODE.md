@@ -35,7 +35,7 @@ zcode/
 ZCode → 设置 → 插件管理 → 发现 → `+` → 添加插件市场，粘贴本仓库地址：
 
 ```
-https://github.com/<你的账号>/Study-Mate
+https://github.com/<你的账号>/Study-Mate-zcode
 ```
 
 安装 `studymate`（12 个学习技能 + `/study`、`/quiz-me`）与 `bilibili-persona`（`/learn-course`）。
