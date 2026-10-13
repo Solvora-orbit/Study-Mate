@@ -28,19 +28,20 @@ zcode/
 1. `zc-sync-upstream`（每日）：上游 Study-Mate 有新提交 → 开/刷新同步 PR。**你合并它**。
 2. `zc-build-studymate`：main 变化 → 重建插件；产物有实质变化才 patch bump 并发布（幂等，无变化不产 commit）。
 3. `zc-sync-video`（每日）：video-to-skill 上游变化 → vendor 刷新 + bump + PR。
-4. ZCode 端：设置 → 插件管理 → 发现 → 刷新市场 → 插件详情点「更新」（官方机制只有这两步是手动的）。
+4. ZCode 端（已配置）：官方 CLI 全自动更新——`node D:\zcode-plugins\refresh.mjs`（市场刷新 + 两个插件升级），由每日定时任务调用，无需 UI 手动点更新；新技能内容在下一次新会话生效。
 
-## 安装
+## 安装（已在本机执行；换机器时照抄）
 
-ZCode → 设置 → 插件管理 → 发现 → `+` → 添加插件市场，粘贴本仓库地址：
-
+```bash
+# <ZCLI> = zcode CLI，本机为 D:\zcode\resources\glm\zcode.cjs
+node <ZCLI> plugins marketplace add Solvora-orbit/Study-Mate-zcode   # 也接受本地仓库路径
+node <ZCLI> plugins install studymate@studymate-suite
+node <ZCLI> plugins install bilibili-persona@studymate-suite
 ```
-https://github.com/<你的账号>/Study-Mate-zcode
-```
 
-安装 `studymate`（12 个学习技能 + `/study`、`/quiz-me`）与 `bilibili-persona`（`/learn-course`）。
+安装物化位置为 ZCode 默认（本机 `C:\Users\LENOVO\.zcode\cli\plugins\`）；开发仓库工作副本在 `D:\repos\Study-Mate-zcode`。UI 路径等价：设置 → 插件管理 → 发现 → `+`。
 
-依赖（仅 bilibili-persona 的本地转写路径需要）：`uv pip install faster-whisper pypdf yt-dlp` + `ffmpeg`；纯用 B 站原生字幕时无需任何依赖。学习数据默认写入 `~/StudyMate`。
+依赖（仅 bilibili-persona 的本地转写路径需要）：`pip install faster-whisper pypdf yt-dlp` + `ffmpeg`；纯用 B 站原生字幕时无需任何依赖。学习数据默认写入 `~/StudyMate`。Windows 上注意本机 `python` 若为 Store 占位符，用 `py -3` 调用脚本。
 
 ## 许可
 
