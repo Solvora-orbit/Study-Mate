@@ -1,0 +1,20 @@
+{
+  "name": "studymate",
+  "version": "0.1.0",
+  "description": "StudyMate AI 学习搭档（ZCode 移植）：定路线、教材式课件、分层练习、可运行证据考核、跨科目共享记忆与进度持久化，面向数学与计算机科目自学。",
+  "author": {
+    "name": "Cattofu（上游 Miaotofu01/Study-Mate）· ZCode 移植见 Solvora-orbit/Study-Mate"
+  },
+  "license": "MIT",
+  "repository": "https://github.com/Solvora-orbit/Study-Mate",
+  "homepage": "https://github.com/Solvora-orbit/Study-Mate#readme",
+  "keywords": [
+    "learning",
+    "education",
+    "studymate",
+    "courseware",
+    "practice"
+  ],
+  "skills": "skills",
+  "commands": "commands"
+}

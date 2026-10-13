@@ -1,0 +1,46 @@
+# 每日把上游 Miaotofu01/Study-Mate 的 main 同步进本 fork：
+# 更新 upstream-sync 分支并开/刷新同步 PR（人工闸门：合并后由 zc-build-studymate 重建插件）。
+name: zc-sync-upstream
+on:
+  schedule:
+    - cron: "17 1 * * *"
+  workflow_dispatch: {}
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Fetch upstream and open/update sync PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git remote add upstream https://github.com/Miaotofu01/Study-Mate
+          git fetch upstream main
+          UP=$(git rev-parse upstream/main)
+          echo "upstream head: $UP"
+          if git merge-base --is-ancestor "$UP" HEAD; then
+            echo "upstream 已全部同步进 main，无需 PR"
+            exit 0
+          fi
+          git push -f origin "$UP:refs/heads/upstream-sync"
+          BODY="自动同步上游 [Miaotofu01/Study-Mate](https://github.com/Miaotofu01/Study-Mate) 到 \`$UP\`。
+          
+          ## 变更概览
+          \`\`\`
+          $(git diff --stat HEAD..."$UP" | tail -60)
+          \`\`\`
+          
+          合并后 \`zc-build-studymate\` 会自动重建 ZCode 插件；若上游改了 preset/ 结构，构建护栏会失败而不是发布半成品。"
+          if gh pr view upstream-sync --json state -q .state 2>/dev/null | grep -q OPEN; then
+            gh pr edit upstream-sync --title "sync(studymate): upstream $UP" --body "$BODY"
+          else
+            gh pr create --base main --head upstream-sync --title "sync(studymate): upstream $UP" --body "$BODY" || \
+            gh pr comment upstream-sync --body "上游又有新提交（$UP），本 PR 已强推更新。" 2>/dev/null || true
+          fi

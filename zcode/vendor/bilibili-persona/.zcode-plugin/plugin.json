@@ -1,0 +1,12 @@
+{
+  "name": "bilibili-persona",
+  "version": "0.1.0",
+  "description": "Turn a bilibili course series into a reusable teacher-persona skill: pick the parts, transcribe them locally, distill the lecturer's style and knowledge into a skill you can ask questions.",
+  "author": {
+    "name": "bilibili-persona contributors"
+  },
+  "license": "GPL-3.0",
+  "repository": "https://github.com/sorrowKnight123/video-to-skill-",
+  "skills": "skills",
+  "commands": "commands"
+}

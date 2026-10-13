@@ -1,0 +1,53 @@
+# main 上的上游技能源（preset/bin/schemas/templates/docs/openai）或移植层变化时：
+# 重建 zcode/studymate 与 marketplace.json；产物有实质变化则 patch bump 并发布提交。
+# 护栏：adaptOpenAiSkill 的替换点与构建器校验不过 → 作业失败，不发布半成品。
+name: zc-build-studymate
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'preset/**'
+      - 'bin/**'
+      - 'schemas/**'
+      - 'templates/**'
+      - 'docs/**'
+      - 'openai/**'
+      - 'zcode/scripts/**'
+      - 'zcode/VERSION'
+      - 'zcode/BUILD-CONFIG.json'
+      - 'zcode/studymate-commands/**'
+      - 'zcode/vendor/**'
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: zc-build
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Rebuild plugin and publish when output changed
+        run: |
+          set -euo pipefail
+          BASE=$(git rev-parse --short HEAD)
+          node zcode/scripts/build-zcode-plugin.mjs --write
+          # porcelain 能同时发现修改与新增文件（上游新增技能时产物里是未跟踪目录）。
+          if [ -z "$(git status --porcelain zcode/studymate marketplace.json)" ]; then
+            echo "产物与已提交版本一致，不发布"
+            exit 0
+          fi
+          node zcode/scripts/bump-version.mjs
+          node zcode/scripts/build-zcode-plugin.mjs --write
+          git config user.name "studymate-zcode-bot"
+          git config user.email "46261826+studymate-zcode-bot@users.noreply.github.com"
+          git add -A
+          git commit -m "zcode: rebuild studymate plugin for $BASE [skip ci]"
+          git push
+          echo "已发布插件版本 $(cat zcode/VERSION)"

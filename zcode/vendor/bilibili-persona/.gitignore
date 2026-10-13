@@ -1,0 +1,22 @@
+# Downloaded video/audio and generated transcripts must never be committed --
+# they are copyrighted course material, and they are large.
+downloads/
+transcripts/
+notes/
+.cache/
+cookies.txt
+
+# Generated example personas are kept on purpose (see examples/), but a persona you
+# build for yourself in a study workspace usually should not be committed either.
+# skills/*/references/分P笔记/
+
+__pycache__/
+*.pyc
+.venv/
+
+# ZCode session artifacts (plan records etc.), not part of the project
+.zcode/plans/
+
+# Third-party reference repos cloned for study (see NOTICE). Never commit these --
+# they are other people's code and would bloat the repo with their full history.
+_refs/

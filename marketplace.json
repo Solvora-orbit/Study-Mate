@@ -1,0 +1,36 @@
+{
+  "name": "studymate-suite",
+  "version": "0.1.0",
+  "plugins": [
+    {
+      "name": "studymate",
+      "version": "0.1.0",
+      "source": "zcode/studymate",
+      "description": "StudyMate AI 学习搭档（ZCode 移植）：定路线、教材式课件、分层练习、可运行证据考核、进度与共享记忆。",
+      "displayName": "StudyMate 学习搭档",
+      "category": "productivity",
+      "keywords": [
+        "learning",
+        "education",
+        "math",
+        "cs"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "bilibili-persona",
+      "version": "0.1.0",
+      "source": "zcode/vendor/bilibili-persona",
+      "description": "Turn a bilibili course series into a reusable teacher-persona skill: pick the parts, transcribe them locally, distill the lecturer's style and knowledge into a skill you can ask questions.",
+      "displayName": "B 站网课蒸馏（video-to-skill）",
+      "category": "productivity",
+      "keywords": [
+        "bilibili",
+        "course",
+        "transcript",
+        "persona"
+      ],
+      "license": "GPL-3.0"
+    }
+  ]
+}

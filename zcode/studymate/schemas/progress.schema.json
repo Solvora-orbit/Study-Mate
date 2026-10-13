@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Progress",
+  "description": "一个科目的运行期进度。词表是三档（未开始 / 学习中 / 已学完），`mastery` 与 `misconceptions` 已移除：掌握度字段取消（目标态规格 §5.2），误解记录只落在 misconceptions.yaml（§5.4）。旧工作区里的旧六档状态与 mastery 键仍读得进——读侧按 §5.2 的映射表归一，写回时才用新词表。",
+  "type": "object",
+  "required": ["updated_at", "nodes", "project"],
+  "properties": {
+    "updated_at": { "type": "string", "format": "date-time" },
+    "nodes": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["status"],
+        "properties": {
+          "status": { "enum": ["未开始", "学习中", "已学完"] },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "project": {
+      "type": "object",
+      "required": ["current"],
+      "description": "在做的项目。里程碑与置位规则见 `record-keeping` 的「项目与实验课」（里程碑就是 curriculum.yaml 里 kind: 实验 的节点）。",
+      "properties": {
+        "current": { "type": "string" }
+      }
+    }
+  }
+}

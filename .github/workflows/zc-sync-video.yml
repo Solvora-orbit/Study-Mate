@@ -1,0 +1,60 @@
+# 每日把上游 sorrowKnight123/video-to-skill- 刷新进 zcode/vendor/bilibili-persona。
+# 内容有变化时：bump vendor 插件版本 → 重建 marketplace.json → 更新 video-sync 分支并开/刷新 PR。
+name: zc-sync-video
+on:
+  schedule:
+    - cron: "23 1 * * *"
+  workflow_dispatch: {}
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  vendor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Refresh vendor and open/update PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          # 本地版本号是我们的时间线（上游会把它冲掉），先记下来。
+          VP=zcode/vendor/bilibili-persona/.zcode-plugin/plugin.json
+          OLD=$(node -p "JSON.parse(require('fs').readFileSync('$VP','utf8')).version")
+          git clone --depth 1 https://github.com/sorrowKnight123/video-to-skill- /tmp/video-upstream
+          node zcode/scripts/sync-video-vendor.mjs /tmp/video-upstream
+          # 内容变化只看 plugin.json 以外（版本号差异不算变化）。
+          if git diff --quiet -- zcode/vendor ":(exclude)$VP"; then
+            echo "vendor 内容与上游一致"
+            git checkout -- zcode/vendor
+            exit 0
+          fi
+          # 有真实变化：在本地版本时间线上 patch +1，保证 ZCode 目录看出新版本。
+          VP="$VP" OLD="$OLD" node -e "
+          const fs = require('fs');
+          const m = JSON.parse(fs.readFileSync(process.env.VP, 'utf8'));
+          const parts = process.env.OLD.split('.');
+          if (parts.length !== 3 || parts.some(p => !/^\d+$/.test(p))) throw new Error('旧版本不是 x.y.z: ' + process.env.OLD);
+          parts[2] = String(Number(parts[2]) + 1);
+          m.version = parts.join('.');
+          fs.writeFileSync(process.env.VP, JSON.stringify(m, null, 2) + '\n');
+          console.log('vendor ' + process.env.OLD + ' -> ' + m.version);
+          "
+          node zcode/scripts/build-zcode-plugin.mjs --write
+          SRC=$(git -C /tmp/video-upstream rev-parse HEAD)
+          git checkout -B video-sync
+          git add -A
+          git commit -m "vendor(bilibili-persona): 同步上游 $SRC [skip ci]"
+          git push -f origin video-sync
+          BODY="上游 video-to-skill 有新提交（\`$SRC\`），vendor 已整体刷新并 bump 版本。合并后 ZCode 目录即可见新版本。"
+          if gh pr view video-sync --json state -q .state 2>/dev/null | grep -q OPEN; then
+            gh pr edit video-sync --title "vendor(bilibili-persona): upstream $SRC" --body "$BODY"
+          else
+            gh pr create --base main --head video-sync --title "vendor(bilibili-persona): upstream $SRC" --body "$BODY"
+          fi
